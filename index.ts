@@ -1,11 +1,16 @@
-// Using @serum/serum and @solana/web3.js, create a limit buy order on any Serum testnet market
+// The bulk of this code is taken directly from the `serum-ts` README:
+// https://github.com/project-serum/serum-ts/tree/master/packages/serum#usage
 
 import dotenv from 'dotenv';
 import { Account, Connection, PublicKey } from '@solana/web3.js';
 import { Market } from '@project-serum/serum';
 
 dotenv.config();
-const walletPrivateKey = (process.env.WALLET_PRIVATE_KEY as string).split(',').map(value => Number(value))
+const walletPrivateKey = (process.env.WALLET_PRIVATE_KEY as string)
+  .replace('[', '')
+  .replace(']', '')
+  .split(',')
+  .map(value => Number(value))
 
 async function placeAndCancelOrder() {
     const connection = new Connection(process.env.RPC_ENDPOINT as string);
@@ -13,8 +18,10 @@ async function placeAndCancelOrder() {
     let programAddress = new PublicKey(process.env.SERUM_DEX_PROGRAM_ID as string);
     let owner = new Account(walletPrivateKey);
     let payer = new PublicKey(process.env.WALLET_SPL_TOKEN_ACCOUNT as string);
+
     let market = await Market.load(connection, marketAddress, {}, programAddress);
     console.log('Market loaded.')
+
     await market.placeOrder(connection, {
       owner,
       payer,
@@ -25,7 +32,6 @@ async function placeAndCancelOrder() {
     });
     console.log('Order placed successfully.')
     
-    // Retrieving open orders by owner
     let myOrders = await market.loadOrdersForOwner(connection, owner.publicKey);
     console.log('My orders:', myOrders)
     
@@ -33,6 +39,7 @@ async function placeAndCancelOrder() {
       await market.cancelOrder(connection, owner, order);
       console.log('Order cancelled.')
     }
+    
     console.log('Completed.')
 }
 
