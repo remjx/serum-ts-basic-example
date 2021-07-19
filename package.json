@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@project-serum/serum": "^0.13.34",
+    "@solana/web3.js": "^1.9.1",
+    "axios": "^0.21.1",
+    "dotenv": "^9.0.0",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "start": "ts-node index.ts"
+  }
+}
